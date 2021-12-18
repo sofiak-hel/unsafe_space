@@ -9,3 +9,7 @@ edition = "2018"
 [dependencies]
 actix-web = "3"
 toml = "0.5.8"
+serde_json = "*"
+serde = "*"
+time = "*"
+handlebars = "4.1.6"

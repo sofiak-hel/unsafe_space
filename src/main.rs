@@ -1,26 +1,16 @@
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::middleware::Logger;
+use actix_web::{App, HttpServer};
 
-#[get("/asd")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
-}
-
-#[post("/rew")]
-async fn echo(req_body: String) -> impl Responder {
-    HttpResponse::NoContent()
-}
-
-async fn manual_hello() -> impl Responder {
-    HttpResponse::Ok().body("Hey there!")
-}
+mod auth;
+mod pages;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
-            .service(hello)
-            .service(echo)
-            .route("/qwe", web::get().to(manual_hello))
+            .wrap(Logger::default())
+            .data(pages::create_handlebars())
+            .configure(pages::config)
     })
     .bind("127.0.0.1:8080")?
     .run()

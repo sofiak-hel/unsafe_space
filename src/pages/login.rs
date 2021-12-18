@@ -1,5 +1,6 @@
 use super::Pages;
 use crate::auth::Identity;
+use crate::db::Database;
 use actix_web::{web, HttpResponse, Responder};
 use handlebars::Handlebars;
 use serde::{Deserialize, Serialize};
@@ -18,9 +19,21 @@ pub async fn get(handlebars: web::Data<Handlebars<'_>>) -> impl Responder {
     HttpResponse::Ok().body(index)
 }
 
-pub async fn post(json: web::Form<LoginInfo>) -> impl Responder {
-    HttpResponse::Found()
-        .header("location", "/")
-        .cookie(Identity::login(&json.username, &json.password).unwrap())
-        .finish()
+pub async fn post(json: web::Form<LoginInfo>, database: web::Data<Database>) -> impl Responder {
+    match Identity::login(&json.username, &json.password, &database) {
+        Ok(res) => {
+            if let Some(session_cookie) = res {
+                HttpResponse::Found()
+                    .header("location", "/")
+                    .cookie(session_cookie)
+                    .finish()
+            } else {
+                HttpResponse::InternalServerError().body("The hek")
+            }
+        }
+        Err(e) => {
+            println!("{}", e);
+            HttpResponse::InternalServerError().body("Db error")
+        }
+    }
 }

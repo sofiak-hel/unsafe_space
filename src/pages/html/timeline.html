@@ -10,7 +10,7 @@
     <div class="container">
         <div class="side-panel">
             <div class="message-panel">
-                <p class="username">{{user.username}}:</p>
+                <p class="username"><a href="/user/{{user.id}}">{{user.username}}</a>:</p>
                 <form action="/message" method="post">
                     <textarea class="message-textarea" type="text" id="message" name="message" rows="5"></textarea></br>
                     <input class="message-send" type="submit" value="Send!">
@@ -21,6 +21,19 @@
             {{#if profile}}
             <div class="profile">
                 <p class="username">{{profile.username}}</p>
+                <div class="bio">
+                    <b>Bio:</b>
+                    {{#if is_own_profile}}
+                    <form action="/user" method="post">
+                        <textarea class="bio-textarea" type="text" id="content"
+                            name="content">{{profile.bio}}</textarea></br>
+                        <input class="bio-update" type="submit" value="Update">
+                    </form>
+                    {{/if}}
+                    {{#unless is_own_profile}}
+                    <p>{{profile.bio}}</p>
+                    {{/unless}}
+                </div>
             </div>
             {{/if}}
 
@@ -38,9 +51,9 @@
             </div>
             {{/each}}
 
-            {{#if not_home}}
+            {{#unless home}}
             <p><a href="/">Back to Timeline</a></p>
-            {{/if}}
+            {{/unless}}
 
         </div>
         <div class="side-panel align-center">

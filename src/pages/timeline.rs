@@ -11,8 +11,9 @@ pub struct TimelineData {
     pub user: User,
     pub messages: Option<Vec<Message>>,
     pub errors: Vec<String>,
-    pub not_home: bool,
+    pub home: bool,
     pub profile: Option<User>,
+    pub is_own_profile: bool,
 }
 
 pub async fn get(
@@ -38,8 +39,9 @@ pub async fn get(
                 user: identity.user,
                 messages: messages,
                 errors,
-                not_home: false,
+                home: true,
                 profile: None,
+                is_own_profile: false,
             },
         )
     } else {

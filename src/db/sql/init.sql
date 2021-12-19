@@ -1,7 +1,8 @@
 CREATE TABLE IF NOT EXISTS Users (
     id INTEGER PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL
+    password TEXT NOT NULL,
+    bio TEXT
 );
 
 INSERT OR IGNORE INTO Users (username, password) VALUES ("otus", "potus");

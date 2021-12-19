@@ -27,13 +27,14 @@ where
 impl Message {
     pub fn from_row(row: &Row) -> Result<Message> {
         Ok(Message {
-            id: row.get(0)?,
+            id: row.get("mid")?,
             sender: User {
-                id: row.get(1)?,
-                username: row.get(5)?,
+                id: row.get("uid")?,
+                username: row.get("username")?,
+                bio: row.get("bio")?,
             },
-            content: row.get(2)?,
-            timestamp: Duration::from_secs(row.get(3)?),
+            content: row.get("content")?,
+            timestamp: Duration::from_secs(row.get("timestamp")?),
         })
     }
 

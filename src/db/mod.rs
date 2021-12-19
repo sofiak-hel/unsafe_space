@@ -38,29 +38,33 @@ impl Database {
         Ok(())
     }
 
-    pub fn find_user(&self, user_id: u32) -> Result<String> {
+    pub fn find_user(&self, user_id: u32) -> Result<(String, Option<String>)> {
         let conn = self.conn.lock().unwrap();
         Ok(conn.query_row(
             &format!(
-                "SELECT username FROM Users 
+                "SELECT username, bio FROM Users 
                     WHERE id={}",
                 user_id
             ),
             [],
-            |row| row.get(0),
+            |row| Ok((row.get(0)?, row.get(1)?)),
         )?)
     }
 
-    pub fn login(&self, username: &String, password: &String) -> Result<(u32, String)> {
+    pub fn login(
+        &self,
+        username: &String,
+        password: &String,
+    ) -> Result<(u32, String, Option<String>)> {
         let conn = self.conn.lock().unwrap();
         Ok(conn.query_row(
             &format!(
-                "SELECT id, username FROM Users 
+                "SELECT id, username, bio FROM Users 
                     WHERE username='{}' AND password='{}'",
                 username, password
             ),
             [],
-            |row| Ok((row.get(0)?, row.get(1)?)),
+            |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
         )?)
     }
 
@@ -71,6 +75,19 @@ impl Database {
                 "INSERT INTO users (username, password) 
                     VALUES ('{}', '{}')",
                 username, password
+            ),
+            [],
+        )?;
+        Ok(())
+    }
+
+    pub fn update_user(&self, user_id: u32, bio: &String) -> Result<()> {
+        let conn = self.conn.lock().unwrap();
+        conn.execute(
+            &format!(
+                "Update Users SET bio='{}' 
+                    WHERE id={}",
+                bio, user_id
             ),
             [],
         )?;
@@ -151,7 +168,7 @@ impl Database {
         };
 
         let mut statement = conn.prepare(&format!(
-            "SELECT * FROM Messages as M LEFT JOIN Users AS U ON U.id=M.user {} ORDER BY timestamp DESC",
+            "SELECT *, M.id as mid, U.id as uid FROM Messages as M LEFT JOIN Users AS U ON U.id=M.user {} ORDER BY timestamp DESC",
             clause
         ))?;
 

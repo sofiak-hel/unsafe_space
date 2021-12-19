@@ -26,8 +26,9 @@ pub async fn get(
                     user: identity.user,
                     messages: Some(messages),
                     errors: vec![],
-                    not_home: true,
+                    home: false,
                     profile: None,
+                    is_own_profile: false,
                 },
             ),
             Err(e) => HttpResponse::Found()

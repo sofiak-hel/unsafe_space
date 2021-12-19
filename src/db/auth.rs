@@ -22,12 +22,13 @@ impl Identity {
 
             let now = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH)?;
             if now.lt(&expires) {
-                let username = database.find_user(user_id)?;
+                let (username, bio) = database.find_user(user_id)?;
                 Ok(Some(Identity {
                     session_id: session_id.to_string(),
                     user: User {
                         id: user_id,
                         username,
+                        bio,
                     },
                 }))
             } else {
@@ -78,12 +79,13 @@ impl Identity {
 pub struct User {
     pub id: u32,
     pub username: String,
+    pub bio: Option<String>,
 }
 
 impl User {
     pub fn from_login(username: &String, password: &String, database: &Database) -> Option<User> {
-        if let Ok((id, username)) = database.login(username, password) {
-            Some(User { id, username })
+        if let Ok((id, username, bio)) = database.login(username, password) {
+            Some(User { id, username, bio })
         } else {
             None
         }
@@ -94,9 +96,15 @@ impl User {
     }
 
     pub fn get_user(user_id: u32, database: &Database) -> Result<User> {
+        let (username, bio) = database.find_user(user_id)?;
         Ok(User {
             id: user_id,
-            username: database.find_user(user_id)?,
+            username,
+            bio,
         })
+    }
+
+    pub fn update(&self, bio: &String, database: &Database) -> Result<()> {
+        database.update_user(self.id, &bio)
     }
 }

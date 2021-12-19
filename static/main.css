@@ -80,6 +80,7 @@ input[type="submit"], button {
     transition: 50ms;
     padding-left: 0.8em;
     padding-right: 0.8em;
+    width: min-content;
 }
 
 input[type="submit"]:hover, button:hover {
@@ -92,12 +93,32 @@ input[type="submit"]:active, button:active {
 
 .profile {
     width: 100%;
-    height: 5em;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    padding: 0.5em;
+     /* display: flex; */
+    /* justify-content: center; */
+    /* align-items: center; */
 }
 
 .profile .username {
+    text-align: center;
     margin: auto;
+}
+
+.profile .bio {
+    width: calc(100% - 5em);
+    height: 8em;
+    padding: 2em;
+    padding-top: 0.5em;
+    padding-bottom: 0;
+}
+
+.profile form {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 1rem);
+}
+
+.profile .bio-textarea {
+    width: 100%;
+    flex: auto;
 }

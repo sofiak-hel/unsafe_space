@@ -20,7 +20,9 @@ pub async fn get(
                     .unwrap();
                 HttpResponse::Ok().body(index)
             } else {
-                HttpResponse::Found().header("location", "/login").finish()
+                Identity::clear_session(&req, HttpResponse::Found(), &database)
+                    .header("location", "/login")
+                    .finish()
             }
         }
         Err(_) => Identity::clear_session(&req, HttpResponse::Found(), &database)

@@ -56,7 +56,6 @@ impl Identity {
             log::info!("{} logged in", username);
             Ok(Some(
                 Cookie::build("session_id", session_id.to_string())
-                    .max_age(time::Duration::minutes(30))
                     .http_only(true)
                     .same_site(SameSite::Strict)
                     .expires(time::OffsetDateTime::from_unix_timestamp(

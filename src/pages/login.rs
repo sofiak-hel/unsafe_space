@@ -47,7 +47,7 @@ pub async fn post(
         }
         Err(e) => {
             println!("{}", e);
-            HttpResponse::InternalServerError().body("Db error")
+            HttpResponse::InternalServerError().body(format!("{}", e))
         }
     }
 }

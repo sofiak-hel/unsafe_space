@@ -1,3 +1,4 @@
+mod files;
 mod index;
 mod login;
 mod logout;
@@ -11,7 +12,8 @@ static LOGIN_PAGE: &str = include_str!("html/login.html");
 static REGISTER_PAGE: &str = include_str!("html/register.html");
 
 pub fn config(cfg: &mut web::ServiceConfig) {
-    cfg.service(web::resource("/").route(web::get().to(index::get)))
+    cfg.service(web::scope("/static").configure(files::config))
+        .service(web::resource("/").route(web::get().to(index::get)))
         .service(
             web::resource("/login")
                 .route(web::get().to(login::get))

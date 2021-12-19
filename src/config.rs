@@ -17,7 +17,7 @@ impl Default for Config {
         Config {
             host: "127.0.0.1".to_owned(),
             port: 8080,
-            force_recreate_db: true,
+            force_recreate_db: false,
             session_exp: 3600,
             static_path: PathBuf::from("./static").canonicalize().unwrap(),
             log_level: "INFO".to_owned(),

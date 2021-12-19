@@ -4,6 +4,7 @@ mod logout;
 mod message;
 mod register;
 mod timeline;
+mod user;
 
 use actix_web::web;
 use handlebars::Handlebars;
@@ -28,7 +29,8 @@ pub fn config(cfg: &mut web::ServiceConfig) {
                 .route(web::post().to(register::post)),
         )
         .service(web::resource("/message").route(web::post().to(message::post)))
-        .service(web::resource("/message/{id}").route(web::get().to(message::get)));
+        .service(web::resource("/message/{id}").route(web::get().to(message::get)))
+        .service(web::resource("/user/{id}").route(web::get().to(user::get)));
 }
 
 #[derive(Debug)]

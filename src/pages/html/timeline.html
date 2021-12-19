@@ -19,7 +19,9 @@
         </div>
         <div class="content">
             {{#if profile}}
-            <b>{{profile.username}}</b>
+            <div class="profile">
+                <p class="username">{{profile.username}}</p>
+            </div>
             {{/if}}
 
             {{#each errors}}
@@ -28,13 +30,17 @@
 
             {{#each messages}}
             <div class="message">
-                <p class="username">{{this.sender.username}}</p>
+                <p class="username"><a href="/user/{{this.sender.id}}">{{this.sender.username}}</a></p>
                 <div class="message-content">
                     <p>{{{this.content}}}</p>
                     <p class="message-timestamp"><a href="/message/{{this.id}}">{{this.timestamp}}</a></p>
                 </div>
             </div>
             {{/each}}
+
+            {{#if not_home}}
+            <p><a href="/">Back to Timeline</a></p>
+            {{/if}}
 
         </div>
         <div class="side-panel align-center">

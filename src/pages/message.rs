@@ -9,7 +9,7 @@ use actix_web::{
 use handlebars::Handlebars;
 use serde::{Deserialize, Serialize};
 
-use super::timeline::{self, IndexPage};
+use super::timeline::{self, TimelineData};
 
 pub async fn get(
     req: HttpRequest,
@@ -22,10 +22,12 @@ pub async fn get(
             Ok(messages) => timeline::render_timeline(
                 &req,
                 &handlebars,
-                &mut IndexPage {
+                &mut TimelineData {
                     user: identity.user,
                     messages: Some(messages),
                     errors: vec![],
+                    not_home: true,
+                    profile: None,
                 },
             ),
             Err(e) => HttpResponse::Found()

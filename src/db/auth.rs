@@ -92,4 +92,11 @@ impl User {
     pub fn create(username: &String, password: &String, database: &Database) -> Result<()> {
         database.register(username, password)
     }
+
+    pub fn get_user(user_id: u32, database: &Database) -> Result<User> {
+        Ok(User {
+            id: user_id,
+            username: database.find_user(user_id)?,
+        })
+    }
 }

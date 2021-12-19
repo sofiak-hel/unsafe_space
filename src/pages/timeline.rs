@@ -7,10 +7,12 @@ use handlebars::Handlebars;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct IndexPage {
+pub struct TimelineData {
     pub user: User,
     pub messages: Option<Vec<Message>>,
     pub errors: Vec<String>,
+    pub not_home: bool,
+    pub profile: Option<User>,
 }
 
 pub async fn get(
@@ -32,10 +34,12 @@ pub async fn get(
         render_timeline(
             &req,
             &handlebars,
-            &mut IndexPage {
+            &mut TimelineData {
                 user: identity.user,
                 messages: messages,
                 errors,
+                not_home: false,
+                profile: None,
             },
         )
     } else {
@@ -46,7 +50,7 @@ pub async fn get(
 pub fn render_timeline(
     req: &HttpRequest,
     handlebars: &Handlebars<'_>,
-    page: &mut IndexPage,
+    page: &mut TimelineData,
 ) -> HttpResponse {
     let mut errors = Vec::new();
 

@@ -2,13 +2,42 @@
 
 <head>
     <title>Unsafe Space</title>
+
+    <link href="/static/main.css" rel="stylesheet" />
 </head>
 
 <body>
-    <h1>Hello!</h1>
-    <p>Username: {{username}}</p>
-    <p>Session id: {{session}}</p>
-    <p><a href="/logout">Logout</a></p>
+    <div class="container">
+        <div class="side-panel">
+            <div class="message-panel">
+                <p class="username">{{user.username}}:</p>
+                <form action="/message" method="post">
+                    <textarea class="message-textarea" type="text" id="message" name="message" rows="5"></textarea></br>
+                    <input class="message-send" type="submit" value="Send!">
+                </form>
+            </div>
+        </div>
+        <div class="content">
+            {{#if error}}
+            <b>Error: {{error}}</b>
+            {{/if}}
+
+            {{#each messages}}
+            <div class="message">
+                <p class="username">{{this.sender.username}}</p>
+                <div class="message-content">
+                    <p>{{this.content}}</p>
+                    <p class="message-timestamp"><a href="/message/{{this.id}}">{{this.timestamp}}</a></p>
+                </div>
+            </div>
+            {{/each}}
+
+        </div>
+        <div class="side-panel align-center">
+            <p><a href="/logout">Logout</a></p>
+        </div>
+    </div>
+
 </body>
 
 </html>

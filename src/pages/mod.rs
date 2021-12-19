@@ -2,6 +2,7 @@ mod files;
 mod index;
 mod login;
 mod logout;
+mod message;
 mod register;
 
 use actix_web::web;
@@ -10,6 +11,7 @@ use handlebars::Handlebars;
 static INDEX_PAGE: &str = include_str!("html/index.html");
 static LOGIN_PAGE: &str = include_str!("html/login.html");
 static REGISTER_PAGE: &str = include_str!("html/register.html");
+static MESSAGE_COMPONENT: &str = include_str!("html/message-component.html");
 
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(web::scope("/static").configure(files::config))
@@ -24,17 +26,19 @@ pub fn config(cfg: &mut web::ServiceConfig) {
             web::resource("/register")
                 .route(web::get().to(register::get))
                 .route(web::post().to(register::post)),
-        );
+        )
+        .service(web::resource("/message").route(web::post().to(message::post)));
 }
 
 #[derive(Debug)]
-pub enum Pages {
-    INDEX,
-    LOGIN,
-    REGISTER,
+pub enum Templates {
+    Index,
+    Login,
+    Register,
+    MessageComponent,
 }
 
-impl std::fmt::Display for Pages {
+impl std::fmt::Display for Templates {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{:?}", self)
     }
@@ -43,13 +47,16 @@ impl std::fmt::Display for Pages {
 pub fn create_handlebars<'reg>() -> Handlebars<'reg> {
     let mut handlebars = Handlebars::new();
     handlebars
-        .register_template_string(&Pages::INDEX.to_string(), INDEX_PAGE)
+        .register_template_string(&Templates::Index.to_string(), INDEX_PAGE)
         .unwrap();
     handlebars
-        .register_template_string(&Pages::LOGIN.to_string(), LOGIN_PAGE)
+        .register_template_string(&Templates::Login.to_string(), LOGIN_PAGE)
         .unwrap();
     handlebars
-        .register_template_string(&Pages::REGISTER.to_string(), REGISTER_PAGE)
+        .register_template_string(&Templates::Register.to_string(), REGISTER_PAGE)
+        .unwrap();
+    handlebars
+        .register_template_string(&Templates::MessageComponent.to_string(), MESSAGE_COMPONENT)
         .unwrap();
     handlebars
 }

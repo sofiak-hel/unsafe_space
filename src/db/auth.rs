@@ -4,12 +4,14 @@ use crate::Result;
 use actix_web::cookie::{Cookie, SameSite};
 use actix_web::dev::HttpResponseBuilder;
 use actix_web::{HttpMessage, HttpRequest};
+use serde::{Deserialize, Serialize};
 use std::time::SystemTime;
 use time;
 
+#[derive(Debug)]
 pub struct Identity {
     pub session_id: String,
-    pub username: String,
+    pub user: User,
 }
 
 impl Identity {
@@ -23,7 +25,10 @@ impl Identity {
                 let username = database.find_user(user_id)?;
                 Ok(Some(Identity {
                     session_id: session_id.to_string(),
-                    username,
+                    user: User {
+                        id: user_id,
+                        username,
+                    },
                 }))
             } else {
                 database.delete_session(session_id.to_string()).ok();
@@ -51,8 +56,8 @@ impl Identity {
         password: &String,
         database: &Database,
     ) -> Result<Option<Cookie<'static>>> {
-        if let Ok((id, _)) = database.login(username, password) {
-            let (session_id, expires) = database.create_session(id)?;
+        if let Some(user) = User::from_login(username, password, database) {
+            let (session_id, expires) = database.create_session(user.id)?;
             log::info!("{} logged in", username);
             Ok(Some(
                 Cookie::build("session_id", session_id.to_string())
@@ -67,8 +72,24 @@ impl Identity {
             Ok(None)
         }
     }
+}
 
-    pub fn register(username: &String, password: &String, database: &Database) -> Result<()> {
+#[derive(Serialize, Deserialize, Debug)]
+pub struct User {
+    pub id: u32,
+    pub username: String,
+}
+
+impl User {
+    pub fn from_login(username: &String, password: &String, database: &Database) -> Option<User> {
+        if let Ok((id, username)) = database.login(username, password) {
+            Some(User { id, username })
+        } else {
+            None
+        }
+    }
+
+    pub fn create(username: &String, password: &String, database: &Database) -> Result<()> {
         database.register(username, password)
     }
 }

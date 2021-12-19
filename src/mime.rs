@@ -7,6 +7,7 @@ use std::path::Path;
 #[derive(Debug, Clone)]
 pub struct MimeTypes {
     mimetypes: HashMap<String, String>,
+    #[allow(dead_code)]
     extensions: HashMap<String, Vec<String>>,
 }
 
@@ -37,6 +38,7 @@ impl MimeTypes {
         })
     }
 
+    #[allow(dead_code)]
     pub fn extensions<T: Into<String>>(&self, mimetype: T) -> Option<&Vec<String>> {
         self.extensions.get(&mimetype.into())
     }

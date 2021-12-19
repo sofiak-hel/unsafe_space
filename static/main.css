@@ -1,0 +1,94 @@
+:root {
+    height: 100%;
+    width: 100%;
+    font-family: helvetica, sans-serif;
+    --default-color: rgb(218, 107, 16);
+    --hover-color: rgb(173, 90, 21);
+    --active-color: rgb(160, 87, 28);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: grid;
+    grid: auto-flow / 2fr 4fr 1fr;
+    margin: auto;
+    width: 60%;
+    height: 100%;
+}
+
+.side-panel {
+    padding: 1rem;
+    background: white;
+}
+
+.align-center {
+    text-align: center;
+}
+
+.content {
+    background: rgb(246, 246, 246);
+    box-shadow: 0 0 5px 0px rgba(97, 97, 97, 0.75);
+    z-index: 1;
+    padding: 0.6rem;
+}
+
+.message-panel {
+    width: 100%;
+}
+
+.username {
+    color: var(--default-color);
+    font-weight: 900;
+    font-size: 2rem;
+}
+
+a {
+    color: var(--default-color);
+}
+
+.message-textarea {
+    padding: 0.5rem;
+    font-size: 1rem;
+    width: 100%;
+}
+
+.message {
+    padding: 1em;
+    background: rgb(246, 246, 246);
+    box-shadow: 0 0 5px 0px rgba(97, 97, 97, 0.75);
+    margin-bottom: 1em;
+}
+
+.message-timestamp {
+    width: 100%;
+    text-align: right;
+}
+
+.message-content {
+}
+
+input[type="submit"], button {
+    border: none;
+    float: right;
+    font-size: 1.5rem;
+    color: white;
+    background: var(--default-color);
+    padding: 0.2rem;
+    margin: 0.2rem;
+    border-radius: 0.2rem;
+    transition: 50ms;
+    padding-left: 0.8em;
+    padding-right: 0.8em;
+}
+
+input[type="submit"]:hover, button:hover {
+    background: var(--hover-color);
+}
+
+input[type="submit"]:active, button:active {
+    background: var(--active-color);
+}

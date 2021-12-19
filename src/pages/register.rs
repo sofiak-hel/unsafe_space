@@ -1,5 +1,5 @@
-use super::Pages;
-use crate::auth::Identity;
+use super::Templates;
+use crate::db::auth::{Identity, User};
 use crate::db::Database;
 use actix_web::{
     web::{Data, Form},
@@ -23,7 +23,7 @@ pub async fn get(
         HttpResponse::Found().header("location", "/").finish()
     } else {
         let page = handlebars
-            .render(&Pages::REGISTER.to_string(), &serde_json::json!({}))
+            .render(&Templates::Register.to_string(), &serde_json::json!({}))
             .unwrap();
 
         HttpResponse::Ok().body(page)
@@ -35,12 +35,12 @@ pub async fn post(
     database: Data<Database>,
     handlebars: Data<Handlebars<'_>>,
 ) -> impl Responder {
-    match Identity::register(&json.username, &json.password, &database) {
+    match User::create(&json.username, &json.password, &database) {
         Ok(_) => HttpResponse::Found().header("location", "/login").finish(),
         Err(_) => {
             let page = handlebars
                 .render(
-                    &Pages::REGISTER.to_string(),
+                    &Templates::Register.to_string(),
                     &serde_json::json!({
                         "error": "User already exists"
                     }),

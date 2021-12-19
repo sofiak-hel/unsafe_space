@@ -1,5 +1,5 @@
-use super::Pages;
-use crate::auth::Identity;
+use super::Templates;
+use crate::db::auth::Identity;
 use crate::db::Database;
 use actix_web::{
     web::{Data, Form},
@@ -23,7 +23,7 @@ pub async fn get(
         HttpResponse::Found().header("location", "/").finish()
     } else {
         let page = handlebars
-            .render(&Pages::LOGIN.to_string(), &serde_json::json!({}))
+            .render(&Templates::Login.to_string(), &serde_json::json!({}))
             .unwrap();
 
         Identity::clear_session(&req, HttpResponse::Ok(), &database).body(page)
@@ -45,7 +45,7 @@ pub async fn post(
             } else {
                 let page = handlebars
                     .render(
-                        &Pages::LOGIN.to_string(),
+                        &Templates::Login.to_string(),
                         &serde_json::json!({"error": "No such user"}),
                     )
                     .unwrap();

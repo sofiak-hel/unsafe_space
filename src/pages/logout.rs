@@ -1,4 +1,4 @@
-use crate::auth::Identity;
+use crate::db::auth::Identity;
 use crate::db::Database;
 use actix_web::{web::Data, HttpRequest, HttpResponse, Responder};
 

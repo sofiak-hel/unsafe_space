@@ -1,7 +1,10 @@
 use super::Pages;
 use crate::auth::Identity;
 use crate::db::Database;
-use actix_web::{web, HttpResponse, Responder};
+use actix_web::{
+    web::{Data, Form},
+    HttpResponse, Responder,
+};
 use handlebars::Handlebars;
 use serde::{Deserialize, Serialize};
 
@@ -11,15 +14,19 @@ pub struct LoginInfo {
     password: String,
 }
 
-pub async fn get(handlebars: web::Data<Handlebars<'_>>) -> impl Responder {
-    let index = handlebars
+pub async fn get(handlebars: Data<Handlebars<'_>>) -> impl Responder {
+    let page = handlebars
         .render(&Pages::LOGIN.to_string(), &serde_json::json!({}))
         .unwrap();
 
-    HttpResponse::Ok().body(index)
+    HttpResponse::Ok().body(page)
 }
 
-pub async fn post(json: web::Form<LoginInfo>, database: web::Data<Database>) -> impl Responder {
+pub async fn post(
+    json: Form<LoginInfo>,
+    database: Data<Database>,
+    handlebars: Data<Handlebars<'_>>,
+) -> impl Responder {
     match Identity::login(&json.username, &json.password, &database) {
         Ok(res) => {
             if let Some(session_cookie) = res {
@@ -28,7 +35,14 @@ pub async fn post(json: web::Form<LoginInfo>, database: web::Data<Database>) -> 
                     .cookie(session_cookie)
                     .finish()
             } else {
-                HttpResponse::InternalServerError().body("The hek")
+                let page = handlebars
+                    .render(
+                        &Pages::LOGIN.to_string(),
+                        &serde_json::json!({"error": "No such user"}),
+                    )
+                    .unwrap();
+
+                HttpResponse::Ok().body(page)
             }
         }
         Err(e) => {

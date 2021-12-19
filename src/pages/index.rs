@@ -9,7 +9,7 @@ pub async fn get(
     handlebars: web::Data<Handlebars<'_>>,
     database: web::Data<Database>,
 ) -> impl Responder {
-    match Identity::from_request(req, &database) {
+    match Identity::from_request(&req, &database) {
         Ok(res) => {
             if let Some(identity) = res {
                 let index = handlebars
@@ -23,9 +23,8 @@ pub async fn get(
                 HttpResponse::Found().header("location", "/login").finish()
             }
         }
-        Err(e) => {
-            println!("{}", e);
-            HttpResponse::InternalServerError().body("Db error")
-        }
+        Err(_) => Identity::clear_session(&req, HttpResponse::Found(), &database)
+            .header("location", "/")
+            .finish(),
     }
 }

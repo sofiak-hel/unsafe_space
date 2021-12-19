@@ -1,5 +1,6 @@
 mod index;
 mod login;
+mod logout;
 
 use actix_web::web;
 use handlebars::Handlebars;
@@ -20,12 +21,13 @@ impl std::fmt::Display for Pages {
 }
 
 pub fn config(cfg: &mut web::ServiceConfig) {
-    cfg.service(web::resource("/").route(web::get().to(index::get)));
-    cfg.service(
-        web::resource("/login")
-            .route(web::get().to(login::get))
-            .route(web::post().to(login::post)),
-    );
+    cfg.service(web::resource("/").route(web::get().to(index::get)))
+        .service(
+            web::resource("/login")
+                .route(web::get().to(login::get))
+                .route(web::post().to(login::post)),
+        )
+        .service(web::resource("/logout").route(web::get().to(logout::get)));
 }
 
 pub fn create_handlebars<'reg>() -> Handlebars<'reg> {

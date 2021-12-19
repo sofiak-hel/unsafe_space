@@ -8,9 +8,9 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct IndexPage {
-    user: User,
-    messages: Option<Vec<Message>>,
-    errors: Vec<String>,
+    pub user: User,
+    pub messages: Option<Vec<Message>>,
+    pub errors: Vec<String>,
 }
 
 pub async fn get(
@@ -20,12 +20,6 @@ pub async fn get(
 ) -> impl Responder {
     if let Ok(Some(identity)) = Identity::from_request(&req, &database) {
         let mut errors = Vec::new();
-
-        let error_cookie = req.cookie("error");
-        if let Some(cookie) = &error_cookie {
-            errors.push(cookie.value().to_owned());
-        }
-
         let messages = match Message::all_messages(&database) {
             Ok(messages) => Some(messages),
             Err(e) => {
@@ -35,23 +29,41 @@ pub async fn get(
             }
         };
 
-        let index = handlebars
-            .render(
-                &Templates::Index.to_string(),
-                &IndexPage {
-                    user: identity.user,
-                    messages,
-                    errors,
-                },
-            )
-            .unwrap();
-
-        let mut response = HttpResponse::Ok();
-        if let Some(error_cookie) = &error_cookie {
-            response.del_cookie(error_cookie);
-        }
-        response.body(index)
+        render_timeline(
+            &req,
+            &handlebars,
+            &mut IndexPage {
+                user: identity.user,
+                messages: messages,
+                errors,
+            },
+        )
     } else {
         HttpResponse::Found().header("location", "/login").finish()
     }
+}
+
+pub fn render_timeline(
+    req: &HttpRequest,
+    handlebars: &Handlebars<'_>,
+    page: &mut IndexPage,
+) -> HttpResponse {
+    let mut errors = Vec::new();
+
+    let error_cookie = req.cookie("error");
+    if let Some(cookie) = &error_cookie {
+        errors.push(cookie.value().to_owned());
+    }
+
+    page.errors.extend(errors);
+
+    let index = handlebars
+        .render(&Templates::Timeline.to_string(), &page)
+        .unwrap();
+
+    let mut response = HttpResponse::Ok();
+    if let Some(error_cookie) = &error_cookie {
+        response.del_cookie(error_cookie);
+    }
+    response.body(index)
 }

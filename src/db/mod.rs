@@ -138,10 +138,10 @@ impl Database {
 
         let mut conditions = Vec::new();
         if let Some(user_id) = user_id {
-            conditions.push(format!("user='{}'", user_id));
+            conditions.push(format!("M.user='{}'", user_id));
         }
         if let Some(message_id) = message_id {
-            conditions.push(format!("id='{}'", message_id));
+            conditions.push(format!("M.id='{}'", message_id));
         }
 
         let clause = if conditions.len() > 0 {

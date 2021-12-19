@@ -50,4 +50,8 @@ impl Message {
     pub fn all_messages(database: &Database) -> Result<Vec<Message>> {
         database.search_messages(None, None)
     }
+
+    pub fn get_message(database: &Database, message_id: u32) -> Result<Vec<Message>> {
+        database.search_messages(None, Some(message_id))
+    }
 }

@@ -1,21 +1,21 @@
 mod files;
-mod index;
 mod login;
 mod logout;
 mod message;
 mod register;
+mod timeline;
 
 use actix_web::web;
 use handlebars::Handlebars;
 
-static INDEX_PAGE: &str = include_str!("html/index.html");
+static TIMELINE_PAGE: &str = include_str!("html/timeline.html");
 static LOGIN_PAGE: &str = include_str!("html/login.html");
 static REGISTER_PAGE: &str = include_str!("html/register.html");
 static MESSAGE_COMPONENT: &str = include_str!("html/message-component.html");
 
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(web::scope("/static").configure(files::config))
-        .service(web::resource("/").route(web::get().to(index::get)))
+        .service(web::resource("/").route(web::get().to(timeline::get)))
         .service(
             web::resource("/login")
                 .route(web::get().to(login::get))
@@ -27,12 +27,13 @@ pub fn config(cfg: &mut web::ServiceConfig) {
                 .route(web::get().to(register::get))
                 .route(web::post().to(register::post)),
         )
-        .service(web::resource("/message").route(web::post().to(message::post)));
+        .service(web::resource("/message").route(web::post().to(message::post)))
+        .service(web::resource("/message/{id}").route(web::get().to(message::get)));
 }
 
 #[derive(Debug)]
 pub enum Templates {
-    Index,
+    Timeline,
     Login,
     Register,
     MessageComponent,
@@ -47,7 +48,7 @@ impl std::fmt::Display for Templates {
 pub fn create_handlebars<'reg>() -> Handlebars<'reg> {
     let mut handlebars = Handlebars::new();
     handlebars
-        .register_template_string(&Templates::Index.to_string(), INDEX_PAGE)
+        .register_template_string(&Templates::Timeline.to_string(), TIMELINE_PAGE)
         .unwrap();
     handlebars
         .register_template_string(&Templates::Login.to_string(), LOGIN_PAGE)

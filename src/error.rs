@@ -2,6 +2,18 @@
 pub enum USpaceError {
     SessionExpired,
     LoginError(Box<Error>),
+    SendMessageError(String),
+}
+
+impl std::fmt::Display for USpaceError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        let text = match &self {
+            USpaceError::SessionExpired => "Session Expired".to_owned(),
+            USpaceError::LoginError(e) => format!("{}", e),
+            USpaceError::SendMessageError(s) => s.to_owned(),
+        };
+        write!(f, "{}", text)
+    }
 }
 
 #[derive(Debug)]
@@ -18,7 +30,7 @@ impl std::fmt::Display for Error {
             Error::RusqliteError(err) => format!("SQLite error: {}", err),
             Error::IOError(err) => format!("IO error: {}", err),
             Error::SystemTimeError(err) => format!("SystemTimeError: {}", err),
-            Error::USpaceError(err) => format!("UnsafeSpaceError: {:?}", err),
+            Error::USpaceError(err) => format!("{}", err),
         };
         write!(f, "{}", text)
     }

@@ -113,7 +113,7 @@ impl Database {
         Ok(())
     }
 
-    pub fn create_message(&self, user_id: u32, message: String) -> Result<()> {
+    pub fn create_message(&self, user_id: u32, message: &String) -> Result<()> {
         let conn = self.conn.lock().unwrap();
         let timestamp = SystemTime::now()
             .duration_since(SystemTime::UNIX_EPOCH)?
@@ -135,9 +135,6 @@ impl Database {
         message_id: Option<u32>,
     ) -> Result<Vec<Message>> {
         let conn = self.conn.lock().unwrap();
-        let timestamp = SystemTime::now()
-            .duration_since(SystemTime::UNIX_EPOCH)?
-            .as_secs();
 
         let mut conditions = Vec::new();
         if let Some(user_id) = user_id {
@@ -154,7 +151,7 @@ impl Database {
         };
 
         let mut statement = conn.prepare(&format!(
-            "SELECT * FROM Messages as M LEFT JOIN Users AS U ON U.id=M.id {} ORDER BY timestamp",
+            "SELECT * FROM Messages as M LEFT JOIN Users AS U ON U.id=M.user {} ORDER BY timestamp DESC",
             clause
         ))?;
 

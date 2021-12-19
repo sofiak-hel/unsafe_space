@@ -2,15 +2,15 @@ use super::Templates;
 use crate::db::auth::{Identity, User};
 use crate::db::messages::Message;
 use crate::db::Database;
-use actix_web::{web, HttpRequest, HttpResponse, Responder};
+use actix_web::{web, HttpMessage, HttpRequest, HttpResponse, Responder};
 use handlebars::Handlebars;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
-struct IndexPage {
+pub struct IndexPage {
     user: User,
     messages: Option<Vec<Message>>,
-    error: Option<String>,
+    errors: Vec<String>,
 }
 
 pub async fn get(
@@ -19,11 +19,19 @@ pub async fn get(
     database: web::Data<Database>,
 ) -> impl Responder {
     if let Ok(Some(identity)) = Identity::from_request(&req, &database) {
-        let (messages, error) = match Message::all_messages(&database) {
-            Ok(messages) => (Some(messages), None),
+        let mut errors = Vec::new();
+
+        let error_cookie = req.cookie("error");
+        if let Some(cookie) = &error_cookie {
+            errors.push(cookie.value().to_owned());
+        }
+
+        let messages = match Message::all_messages(&database) {
+            Ok(messages) => Some(messages),
             Err(e) => {
                 log::error!("{}", e);
-                (None, Some("Unable to fetch messages:".to_string()))
+                errors.push("Unable to fetch messages:".to_string());
+                None
             }
         };
 
@@ -33,12 +41,16 @@ pub async fn get(
                 &IndexPage {
                     user: identity.user,
                     messages,
-                    error,
+                    errors,
                 },
             )
             .unwrap();
 
-        HttpResponse::Ok().body(index)
+        let mut response = HttpResponse::Ok();
+        if let Some(error_cookie) = &error_cookie {
+            response.del_cookie(error_cookie);
+        }
+        response.body(index)
     } else {
         HttpResponse::Found().header("location", "/login").finish()
     }

@@ -8,17 +8,15 @@ INSERT OR IGNORE INTO Users (username, password) VALUES ("otus", "potus");
 
 CREATE TABLE IF NOT EXISTS Sessions (
     id INTEGER PRIMARY KEY,
-    user INTEGER,
-    expires INTEGER,
+    user INTEGER NOT NULL,
+    expires INTEGER NOT NULL,
     FOREIGN KEY(user) REFERENCES User(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Messages (
     id INTEGER PRIMARY KEY,
-    user INTEGER,
-    content TEXT,
-    timestamp INTEGER,
+    user INTEGER NOT NULL,
+    content TEXT NOT NULL,
+    timestamp INTEGER NOT NULL,
     FOREIGN KEY(user) REFERENCES User(id) ON DELETE CASCADE
 );
-
-INSERT OR IGNORE INTO Messages (user, content, timestamp) VALUES (1, "Test message!", 12451)

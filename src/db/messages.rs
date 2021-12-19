@@ -4,7 +4,7 @@ use rusqlite::Row;
 use serde::{Deserialize, Serialize, Serializer};
 
 use super::{auth::User, Database};
-use crate::Result;
+use crate::{error::USpaceError, Result};
 use std::result::Result as OriginalResult;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -37,7 +37,12 @@ impl Message {
         })
     }
 
-    pub fn send_message(sender: User, content: String, database: &Database) -> Result<()> {
+    pub fn send_message(sender: &User, content: &String, database: &Database) -> Result<()> {
+        if content.len() == 0 {
+            Err(USpaceError::SendMessageError(
+                "Empty message not allowed.".to_owned(),
+            ))?
+        }
         database.create_message(sender.id, content)?;
         Ok(())
     }

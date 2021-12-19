@@ -18,15 +18,19 @@
             </div>
         </div>
         <div class="content">
-            {{#if error}}
-            <b>Error: {{error}}</b>
+            {{#if profile}}
+            <b>{{profile.username}}</b>
             {{/if}}
+
+            {{#each errors}}
+            <b>Error: {{this}}</b>
+            {{/each}}
 
             {{#each messages}}
             <div class="message">
                 <p class="username">{{this.sender.username}}</p>
                 <div class="message-content">
-                    <p>{{this.content}}</p>
+                    <p>{{{this.content}}}</p>
                     <p class="message-timestamp"><a href="/message/{{this.id}}">{{this.timestamp}}</a></p>
                 </div>
             </div>

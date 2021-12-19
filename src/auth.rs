@@ -67,4 +67,8 @@ impl Identity {
             Ok(None)
         }
     }
+
+    pub fn register(username: &String, password: &String, database: &Database) -> Result<()> {
+        database.register(username, password)
+    }
 }

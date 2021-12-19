@@ -3,7 +3,7 @@ use crate::auth::Identity;
 use crate::db::Database;
 use actix_web::{
     web::{Data, Form},
-    HttpResponse, Responder,
+    HttpRequest, HttpResponse, Responder,
 };
 use handlebars::Handlebars;
 use serde::{Deserialize, Serialize};
@@ -14,12 +14,20 @@ pub struct LoginInfo {
     password: String,
 }
 
-pub async fn get(handlebars: Data<Handlebars<'_>>) -> impl Responder {
-    let page = handlebars
-        .render(&Pages::LOGIN.to_string(), &serde_json::json!({}))
-        .unwrap();
+pub async fn get(
+    req: HttpRequest,
+    handlebars: Data<Handlebars<'_>>,
+    database: Data<Database>,
+) -> impl Responder {
+    if let Ok(Some(_)) = Identity::from_request(&req, &database) {
+        HttpResponse::Found().header("location", "/").finish()
+    } else {
+        let page = handlebars
+            .render(&Pages::LOGIN.to_string(), &serde_json::json!({}))
+            .unwrap();
 
-    HttpResponse::Ok().body(page)
+        Identity::clear_session(&req, HttpResponse::Ok(), &database).body(page)
+    }
 }
 
 pub async fn post(

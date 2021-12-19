@@ -9,24 +9,15 @@ pub async fn get(
     handlebars: web::Data<Handlebars<'_>>,
     database: web::Data<Database>,
 ) -> impl Responder {
-    match Identity::from_request(&req, &database) {
-        Ok(res) => {
-            if let Some(identity) = res {
-                let index = handlebars
-                    .render(
-                        &Pages::INDEX.to_string(),
-                        &serde_json::json!({ "session": identity.session_id, "username": identity.username }),
-                    )
-                    .unwrap();
-                HttpResponse::Ok().body(index)
-            } else {
-                Identity::clear_session(&req, HttpResponse::Found(), &database)
-                    .header("location", "/login")
-                    .finish()
-            }
-        }
-        Err(_) => Identity::clear_session(&req, HttpResponse::Found(), &database)
-            .header("location", "/")
-            .finish(),
+    if let Ok(Some(identity)) = Identity::from_request(&req, &database) {
+        let index = handlebars
+        .render(
+            &Pages::INDEX.to_string(),
+            &serde_json::json!({ "session": identity.session_id, "username": identity.username }),
+        )
+        .unwrap();
+        HttpResponse::Ok().body(index)
+    } else {
+        HttpResponse::Found().header("location", "/login").finish()
     }
 }

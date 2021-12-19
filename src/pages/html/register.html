@@ -5,20 +5,20 @@
 </head>
 
 <body>
-    <h1>Login page!</h1>
+    <h1>Register below:</h1>
 
     {{#if error}}
     <b>Error: {{error}}</b>
     {{/if}}
-    <form action="/login" method="post">
+    <form action="/register" method="post">
         <label for="username">Username:</label></br>
         <input type="text" id="username" name="username"></br>
         <label for="password">Password:</label></br>
         <input type="password" id="password" name="password"></br>
-        <input type="submit" value="Login">
+        <input type="submit" value="Register">
     </form>
 
-    <p>No user yet? <a href="/register">Register here!</a></p>
+    <p>Already have a user? <a href="/login">Login here!</a></p>
 </body>
 
 </html>

@@ -60,6 +60,19 @@ impl Database {
         )?)
     }
 
+    pub fn register(&self, username: &String, password: &String) -> Result<()> {
+        let conn = self.conn.lock().unwrap();
+        conn.execute(
+            &format!(
+                "INSERT INTO users (username, password) 
+                    VALUES ('{}', '{}')",
+                username, password
+            ),
+            [],
+        )?;
+        Ok(())
+    }
+
     pub fn find_session(&self, session_id: &String) -> Result<(u32, u32, Duration)> {
         let conn = self.conn.lock().unwrap();
         let (id, user, expires) = conn.query_row(

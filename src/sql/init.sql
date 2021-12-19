@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS Users (
     id INTEGER PRIMARY KEY,
-    username TEXT NOT NULL,
+    username TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL
 );
 

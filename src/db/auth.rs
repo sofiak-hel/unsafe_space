@@ -75,7 +75,7 @@ impl Identity {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct User {
     pub id: u32,
     pub username: String,

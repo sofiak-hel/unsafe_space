@@ -13,7 +13,6 @@ pub struct TimelineData {
     pub errors: Vec<String>,
     pub home: bool,
     pub profile: Option<User>,
-    pub is_own_profile: bool,
 }
 
 pub async fn get(
@@ -41,7 +40,6 @@ pub async fn get(
                 errors,
                 home: true,
                 profile: None,
-                is_own_profile: false,
             },
         )
     } else {

@@ -19,16 +19,15 @@ pub async fn get(
 ) -> impl Responder {
     if let Ok(Some(identity)) = Identity::from_request(&req, &database) {
         match Message::get_message(&database, *message_id) {
-            Ok(messages) => timeline::render_timeline(
+            Ok(message) => timeline::render_timeline(
                 &req,
                 &handlebars,
                 &mut TimelineData {
                     user: identity.user,
-                    messages: Some(messages),
+                    messages: Some(vec![message]),
                     errors: vec![],
                     home: false,
                     profile: None,
-                    is_own_profile: false,
                 },
             ),
             Err(e) => HttpResponse::Found()
@@ -57,6 +56,27 @@ pub async fn post(
             Err(e) => HttpResponse::Found()
                 .header("location", "/")
                 .cookie(Cookie::build("error", format!("Failed to send message: {}", e)).finish())
+                .finish(),
+        }
+    } else {
+        HttpResponse::Found().header("location", "/login").finish()
+    }
+}
+
+pub async fn delete(
+    req: HttpRequest,
+    message_id: web::Path<u32>,
+    database: Data<Database>,
+) -> impl Responder {
+    if let Ok(Some(identity)) = Identity::from_request(&req, &database) {
+        match Message::get_message(&database, *message_id) {
+            Ok(message) => {
+                message.delete(identity.user.id, &database).ok();
+                HttpResponse::Found().header("location", "/").finish()
+            }
+            _ => HttpResponse::Found()
+                .header("location", "/")
+                .cookie(Cookie::build("error", format!("Message not found")).finish())
                 .finish(),
         }
     } else {

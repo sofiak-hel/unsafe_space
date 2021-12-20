@@ -7,7 +7,7 @@ use super::{auth::User, Database};
 use crate::{error::USpaceError, Result};
 use std::result::Result as OriginalResult;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Message {
     id: u32,
     sender: User,
@@ -52,11 +52,19 @@ impl Message {
         database.search_messages(None, None)
     }
 
-    pub fn get_message(database: &Database, message_id: u32) -> Result<Vec<Message>> {
-        database.search_messages(None, Some(message_id))
+    pub fn get_message(database: &Database, message_id: u32) -> Result<Message> {
+        if let Some(message) = database.search_messages(None, Some(message_id))?.first() {
+            Ok(message.clone())
+        } else {
+            Err(USpaceError::FetchError("Message not found".to_string()))?
+        }
     }
 
     pub fn by_user(database: &Database, user_id: u32) -> Result<Vec<Message>> {
         database.search_messages(Some(user_id), None)
+    }
+
+    pub fn delete(&self, user_id: u32, database: &Database) -> Result<()> {
+        database.delete_message(self.id, user_id)
     }
 }

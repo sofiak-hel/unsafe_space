@@ -3,6 +3,7 @@ pub enum USpaceError {
     SessionExpired,
     LoginError(Box<Error>),
     SendMessageError(String),
+    FetchError(String),
 }
 
 impl std::fmt::Display for USpaceError {
@@ -11,6 +12,7 @@ impl std::fmt::Display for USpaceError {
             USpaceError::SessionExpired => "Session Expired".to_owned(),
             USpaceError::LoginError(e) => format!("{}", e),
             USpaceError::SendMessageError(s) => s.to_owned(),
+            USpaceError::FetchError(s) => s.to_owned(),
         };
         write!(f, "{}", text)
     }

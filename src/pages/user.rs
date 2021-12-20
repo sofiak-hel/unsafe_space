@@ -24,7 +24,6 @@ pub async fn get(
                 &req,
                 &handlebars,
                 &mut TimelineData {
-                    is_own_profile: &identity.user.id == &user.id,
                     user: identity.user,
                     errors: vec![],
                     messages: Some(messages),

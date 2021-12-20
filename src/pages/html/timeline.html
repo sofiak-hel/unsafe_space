@@ -23,14 +23,14 @@
                 <p class="username">{{profile.username}}</p>
                 <div class="bio">
                     <b>Bio:</b>
-                    {{#if is_own_profile}}
+                    {{#if (eq profile.id ../user.id)}}
                     <form action="/user" method="post">
                         <textarea class="bio-textarea" type="text" id="content"
                             name="content">{{profile.bio}}</textarea></br>
                         <input class="bio-update" type="submit" value="Update">
                     </form>
                     {{/if}}
-                    {{#unless is_own_profile}}
+                    {{#unless (eq profile.id ../user.id)}}
                     <p>{{profile.bio}}</p>
                     {{/unless}}
                 </div>
@@ -46,7 +46,14 @@
                 <p class="username"><a href="/user/{{this.sender.id}}">{{this.sender.username}}</a></p>
                 <div class="message-content">
                     <p>{{{this.content}}}</p>
-                    <p class="message-timestamp"><a href="/message/{{this.id}}">{{this.timestamp}}</a></p>
+                    <div class="message-buttons">
+                        <p class="message-align-right">
+                            {{#if (eq this.sender.id ../user.id)}}
+                            <a class="delete" href="/message/delete/{{this.id}}">Delete</a>
+                            {{/if}}
+                            <a href="/message/{{this.id}}">{{this.timestamp}}</a>
+                        </p>
+                    </div>
                 </div>
             </div>
             {{/each}}

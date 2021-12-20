@@ -30,6 +30,7 @@ pub fn config(cfg: &mut web::ServiceConfig) {
         )
         .service(web::resource("/message").route(web::post().to(message::post)))
         .service(web::resource("/message/{id}").route(web::get().to(message::get)))
+        .service(web::resource("/message/delete/{id}").route(web::get().to(message::delete)))
         .service(web::resource("/user/{id}").route(web::get().to(user::get)))
         .service(web::resource("/user").route(web::post().to(user::post)));
 }

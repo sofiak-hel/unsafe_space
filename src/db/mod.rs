@@ -146,6 +146,18 @@ impl Database {
         Ok(())
     }
 
+    pub fn delete_message(&self, message_id: u32, user_id: u32) -> Result<()> {
+        let conn = self.conn.lock().unwrap();
+        conn.execute(
+            &format!(
+                "DELETE FROM Messages WHERE id={} AND user={}",
+                message_id, user_id
+            ),
+            [],
+        )?;
+        Ok(())
+    }
+
     pub fn search_messages(
         &self,
         user_id: Option<u32>,
@@ -178,8 +190,6 @@ impl Database {
         while let Some(row) = rows.next()? {
             messages.push(Message::from_row(&row)?)
         }
-
-        dbg!(&messages);
 
         Ok(messages)
     }

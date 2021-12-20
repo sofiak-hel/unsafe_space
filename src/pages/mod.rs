@@ -12,7 +12,6 @@ use handlebars::Handlebars;
 static TIMELINE_PAGE: &str = include_str!("html/timeline.html");
 static LOGIN_PAGE: &str = include_str!("html/login.html");
 static REGISTER_PAGE: &str = include_str!("html/register.html");
-static MESSAGE_COMPONENT: &str = include_str!("html/message-component.html");
 
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(web::scope("/static").configure(files::config))
@@ -40,7 +39,6 @@ pub enum Templates {
     Timeline,
     Login,
     Register,
-    MessageComponent,
 }
 
 impl std::fmt::Display for Templates {
@@ -59,9 +57,6 @@ pub fn create_handlebars<'reg>() -> Handlebars<'reg> {
         .unwrap();
     handlebars
         .register_template_string(&Templates::Register.to_string(), REGISTER_PAGE)
-        .unwrap();
-    handlebars
-        .register_template_string(&Templates::MessageComponent.to_string(), MESSAGE_COMPONENT)
         .unwrap();
     handlebars
 }

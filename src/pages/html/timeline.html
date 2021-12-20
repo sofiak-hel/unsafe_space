@@ -10,7 +10,7 @@
     <div class="container">
         <div class="side-panel">
             <div class="message-panel">
-                <p class="username"><a href="/user/{{user.id}}">{{user.username}}</a>:</p>
+                <p class="username"><a href="/user/{{{user.id}}}">{{{user.username}}}</a>:</p>
                 <form action="/message" method="post">
                     <textarea class="message-textarea" type="text" id="message" name="message" rows="5"></textarea></br>
                     <input class="message-send" type="submit" value="Send!">
@@ -20,18 +20,18 @@
         <div class="content">
             {{#if profile}}
             <div class="profile">
-                <p class="username">{{profile.username}}</p>
+                <p class="username">{{{profile.username}}}</p>
                 <div class="bio">
                     <b>Bio:</b>
                     {{#if (eq profile.id ../user.id)}}
                     <form action="/user" method="post">
                         <textarea class="bio-textarea" type="text" id="content"
-                            name="content">{{profile.bio}}</textarea></br>
+                            name="content">{{{profile.bio}}}</textarea></br>
                         <input class="bio-update" type="submit" value="Update">
                     </form>
                     {{/if}}
                     {{#unless (eq profile.id ../user.id)}}
-                    <p>{{profile.bio}}</p>
+                    <p>{{{profile.bio}}}</p>
                     {{/unless}}
                 </div>
             </div>
@@ -43,15 +43,15 @@
 
             {{#each messages}}
             <div class="message">
-                <p class="username"><a href="/user/{{this.sender.id}}">{{this.sender.username}}</a></p>
+                <p class="username"><a href="/user/{{{this.sender.id}}}">{{{this.sender.username}}}</a></p>
                 <div class="message-content">
                     <p>{{{this.content}}}</p>
                     <div class="message-buttons">
                         <p class="message-align-right">
                             {{#if (eq this.sender.id ../user.id)}}
-                            <a class="delete" href="/message/delete/{{this.id}}">Delete</a>
+                            <a class="delete" href="/message/delete/{{{this.id}}}">Delete</a>
                             {{/if}}
-                            <a href="/message/{{this.id}}">{{this.timestamp}}</a>
+                            <a href="/message/{{{this.id}}}">{{{this.timestamp}}}</a>
                         </p>
                     </div>
                 </div>

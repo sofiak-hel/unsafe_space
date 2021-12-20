@@ -2,23 +2,29 @@
 
 <head>
     <title>Unsafe Space</title>
+
+    <link href="/static/main.css" rel="stylesheet" />
 </head>
 
 <body>
-    <h1>Login page!</h1>
+    <div class="container">
+        <div class="content loginregister">
+            <h1>Login page!</h1>
 
-    {{#if error}}
-    <b>Error: {{error}}</b>
-    {{/if}}
-    <form action="/login" method="post">
-        <label for="username">Username:</label></br>
-        <input type="text" id="username" name="username"></br>
-        <label for="password">Password:</label></br>
-        <input type="password" id="password" name="password"></br>
-        <input type="submit" value="Login">
-    </form>
+            {{#if error}}
+            <b>Error: {{error}}</b>
+            {{/if}}
+            <form action="/login" method="post">
+                <label for="username">Username:</label></br>
+                <input type="text" id="username" name="username"></br>
+                <label for="password">Password:</label></br>
+                <input type="password" id="password" name="password"></br>
+                <input type="submit" value="Login">
+            </form>
 
-    <p>No user yet? <a href="/register">Register here!</a></p>
+            <p>No user yet? <a href="/register">Register here!</a></p>
+        </div>
+    </div>
 </body>
 
 </html>

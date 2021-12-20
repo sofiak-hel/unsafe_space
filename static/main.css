@@ -35,6 +35,14 @@
     z-index: 1;
 }
 
+.loginregister {
+    padding: 0.5em;
+}
+
+.loginregister input[type="submit"] {
+    float: none;
+}
+
 .message-panel {
     width: 100%;
 }

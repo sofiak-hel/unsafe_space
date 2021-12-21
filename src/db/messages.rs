@@ -1,27 +1,28 @@
-use std::time::Duration;
-
+use chrono::{DateTime, Local, TimeZone};
 use rusqlite::Row;
-use serde::{Deserialize, Serialize, Serializer};
+use serde::{Serialize, Serializer};
 
 use super::{auth::User, Database};
 use crate::{error::USpaceError, Result};
 use std::result::Result as OriginalResult;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Debug, Clone)]
 pub struct Message {
     id: u32,
     sender: User,
     content: String,
     #[serde(serialize_with = "timestamp_serialize")]
-    timestamp: Duration,
+    timestamp: DateTime<Local>,
 }
 
-fn timestamp_serialize<S>(duration: &Duration, serializer: S) -> OriginalResult<S::Ok, S::Error>
+fn timestamp_serialize<S>(
+    timestamp: &DateTime<Local>,
+    serializer: S,
+) -> OriginalResult<S::Ok, S::Error>
 where
     S: Serializer,
 {
-    let datetime = chrono::NaiveDateTime::from_timestamp(duration.as_secs() as i64, 0);
-    serializer.serialize_str(datetime.format("%d.%m.%Y %H:%M:%S ").to_string().as_str())
+    serializer.serialize_str(timestamp.format("%d.%m.%Y %H:%M:%S ").to_string().as_str())
 }
 
 impl Message {
@@ -34,7 +35,7 @@ impl Message {
                 bio: row.get("bio")?,
             },
             content: row.get("content")?,
-            timestamp: Duration::from_secs(row.get("timestamp")?),
+            timestamp: Local.timestamp(row.get("timestamp")?, 0),
         })
     }
 

@@ -4,8 +4,8 @@ use crate::Result;
 use actix_web::cookie::{Cookie, SameSite};
 use actix_web::dev::HttpResponseBuilder;
 use actix_web::{HttpMessage, HttpRequest};
+use chrono::Local;
 use serde::{Deserialize, Serialize};
-use std::time::SystemTime;
 use time;
 
 #[derive(Debug)]
@@ -20,8 +20,7 @@ impl Identity {
             let (session_id, user_id, expires) =
                 database.find_session(&cookie.value().to_owned())?;
 
-            let now = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH)?;
-            if now.lt(&expires) {
+            if Local::now() < expires {
                 let (username, bio) = database.find_user(user_id)?;
                 Ok(Some(Identity {
                     session_id: session_id.to_string(),
@@ -65,7 +64,7 @@ impl Identity {
                     .http_only(true)
                     .same_site(SameSite::Strict)
                     .expires(time::OffsetDateTime::from_unix_timestamp(
-                        expires.as_secs() as i64
+                        expires.timestamp() as i64,
                     ))
                     .finish(),
             ))

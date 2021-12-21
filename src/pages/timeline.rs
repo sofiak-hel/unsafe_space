@@ -4,9 +4,9 @@ use crate::db::messages::Message;
 use crate::db::Database;
 use actix_web::{web, HttpMessage, HttpRequest, HttpResponse, Responder};
 use handlebars::Handlebars;
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Debug)]
 pub struct TimelineData {
     pub user: User,
     pub messages: Option<Vec<Message>>,

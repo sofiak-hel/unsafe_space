@@ -1,6 +1,6 @@
+use chrono::{DateTime, Duration, Local, TimeZone};
 use rusqlite::Connection;
 use std::sync::{Arc, Mutex};
-use std::time::{Duration, SystemTime};
 
 pub mod auth;
 pub mod messages;
@@ -94,7 +94,7 @@ impl Database {
         Ok(())
     }
 
-    pub fn find_session(&self, session_id: &String) -> Result<(u32, u32, Duration)> {
+    pub fn find_session(&self, session_id: &String) -> Result<(u32, u32, DateTime<Local>)> {
         let conn = self.conn.lock().unwrap();
         let (id, user, expires) = conn.query_row(
             &format!(
@@ -105,19 +105,18 @@ impl Database {
             [],
             |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
         )?;
-        let expires = Duration::from_secs(expires);
+        let expires = Local.timestamp(expires, 0);
         Ok((id, user, expires))
     }
 
-    pub fn create_session(&self, user_id: u32) -> Result<(i64, Duration)> {
+    pub fn create_session(&self, user_id: u32) -> Result<(i64, DateTime<Local>)> {
         let conn = self.conn.lock().unwrap();
-        let expires = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH)?
-            + Duration::new(self.config.session_exp, 0);
+        let expires = Local::now() + Duration::minutes(self.config.session_exp);
         conn.execute(
             &format!(
                 "INSERT INTO Sessions (user, expires) VALUES ('{}', {})",
                 user_id,
-                expires.as_secs()
+                expires.timestamp()
             ),
             [],
         )?;
@@ -132,9 +131,7 @@ impl Database {
 
     pub fn create_message(&self, user_id: u32, message: &String) -> Result<()> {
         let conn = self.conn.lock().unwrap();
-        let timestamp = SystemTime::now()
-            .duration_since(SystemTime::UNIX_EPOCH)?
-            .as_secs();
+        let timestamp = Local::now().timestamp();
 
         conn.execute(
             &format!(

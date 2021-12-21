@@ -20,7 +20,7 @@ jobs:
       run: |
         strip target/release/unsafe_space
         mv target/release/unsafe_space unsafe_space
-        zip unsafe_space.zip unsafe_space static config.toml
+        zip unsafe_space.zip unsafe_space static/* config.toml
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v2
       with:
@@ -53,7 +53,7 @@ jobs:
       run: |
         strip target/release/unsafe_space
         mv target/release/unsafe_space unsafe_space
-        zip unsafe_space.zip unsafe_space static config.toml
+        zip unsafe_space.zip unsafe_space static/* config.toml
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v2
       with:

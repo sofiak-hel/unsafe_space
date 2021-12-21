@@ -143,15 +143,9 @@ impl Database {
         Ok(())
     }
 
-    pub fn delete_message(&self, message_id: u32, user_id: u32) -> Result<()> {
+    pub fn delete_message(&self, message_id: u32) -> Result<()> {
         let conn = self.conn.lock().unwrap();
-        conn.execute(
-            &format!(
-                "DELETE FROM Messages WHERE id={} AND user={}",
-                message_id, user_id
-            ),
-            [],
-        )?;
+        conn.execute(&format!("DELETE FROM Messages WHERE id={}", message_id), [])?;
         Ok(())
     }
 

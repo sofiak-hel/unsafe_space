@@ -65,7 +65,7 @@ impl Message {
         database.search_messages(Some(user_id), None)
     }
 
-    pub fn delete(&self, user_id: u32, database: &Database) -> Result<()> {
-        database.delete_message(self.id, user_id)
+    pub fn delete(&self, database: &Database) -> Result<()> {
+        database.delete_message(self.id)
     }
 }

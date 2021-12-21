@@ -63,23 +63,15 @@ pub async fn post(
     }
 }
 
-pub async fn delete(
-    req: HttpRequest,
-    message_id: web::Path<u32>,
-    database: Data<Database>,
-) -> impl Responder {
-    if let Ok(Some(identity)) = Identity::from_request(&req, &database) {
-        match Message::get_message(&database, *message_id) {
-            Ok(message) => {
-                message.delete(identity.user.id, &database).ok();
-                HttpResponse::Found().header("location", "/").finish()
-            }
-            _ => HttpResponse::Found()
-                .header("location", "/")
-                .cookie(Cookie::build("error", format!("Message not found")).finish())
-                .finish(),
+pub async fn delete(message_id: web::Path<u32>, database: Data<Database>) -> impl Responder {
+    match Message::get_message(&database, *message_id) {
+        Ok(message) => {
+            message.delete(&database).ok();
+            HttpResponse::Found().header("location", "/").finish()
         }
-    } else {
-        HttpResponse::Found().header("location", "/login").finish()
+        _ => HttpResponse::Found()
+            .header("location", "/")
+            .cookie(Cookie::build("error", format!("Message not found")).finish())
+            .finish(),
     }
 }

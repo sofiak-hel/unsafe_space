@@ -72,7 +72,7 @@ impl Database {
         let conn = self.conn.lock().unwrap();
         conn.execute(
             &format!(
-                "INSERT INTO users (username, password) 
+                "INSERT INTO Users (username, password) 
                     VALUES ('{}', '{}')",
                 username, password
             ),
@@ -114,7 +114,7 @@ impl Database {
         let expires = Local::now() + Duration::minutes(self.config.session_exp);
         conn.execute(
             &format!(
-                "INSERT INTO Sessions (user, expires) VALUES ('{}', {})",
+                "INSERT INTO Sessions (user, expires) VALUES ({}, {})",
                 user_id,
                 expires.timestamp()
             ),

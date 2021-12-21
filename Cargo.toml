@@ -9,7 +9,7 @@ edition = "2018"
 [dependencies]
 actix-web = "3"
 toml = "0.5.8"
-rusqlite = "0.26.3"
+rusqlite = { version = "0.26.3", features = ["bundled"] }
 handlebars = "4.1.6"
 env_logger = "0.9.0"
 chrono = "0.4.19"

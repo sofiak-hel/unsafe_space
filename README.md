@@ -1,9 +1,29 @@
 
 # Unsafe Space
 
+[![Rust](https://github.com/sofiak-hel/unsafe_space/actions/workflows/rust.yml/badge.svg)](https://github.com/sofiak-hel/unsafe_space/actions/workflows/rust.yml)
+
 Ever wanted to host your very own Twitter, except with a lot of excitement from
 all the vulnerabilities and possibilities you'll be giving to hackers to host
 it? Enter Unsafe Space, The Twitter-like server for you!
+
+## Usage
+
+### Download pre-compiled:
+(From the [Releases](https://github.com/sofiak-hel/unsafe_space/releases)-page)
+- [Windows](https://github.com/sofiak-hel/unsafe_space/releases/download/v1.0.0/unsafe_space.windows.zip)
+- [Linux](https://github.com/sofiak-hel/unsafe_space/releases/download/v1.0.0/unsafe_space.linux.zip)
+- [MacOS](https://github.com/sofiak-hel/unsafe_space/releases/download/v1.0.0/unsafe_space.macos.zip)
+
+The .zip should come with a `config.toml` and a `static` folder. It is important
+that both are in the working directory (same directory) when you run the
+application.
+
+### Compile and run yourself
+Compiling this project yourself is fairly simple:
+1. [Install Rust](https://www.rust-lang.org/tools/install)
+2. Clone the repository
+3. run `cargo run` in the repository. The server should now be open at 127.0.0.1:8080
 
 ## Some fun injections and XSS to try out:
 
@@ -44,7 +64,9 @@ software. Even in the database passwords are stored as plaintext.
 
 ### How to fix?
 Check for TLS every time when reacting to requests. Also use a cryptographic
-hash function when storing passwords.
+hash function when storing passwords. Actix web also supports
+[rusttls](https://github.com/rustls/rustls) which could provide easy tls support
+without needing a reverse proxy.
 
 ## 3. [A03:2021 - Injection](https://owasp.org/Top10/A03_2021-Injection/)  
 ### Links
@@ -96,9 +118,6 @@ the server logs instead.
 As of writing Unsafe Space does not have this vulnerability. However, as I will
 not be maintaining this project, this will one day apply.
 
-## 8. [~~A08:2021 – Software and Data Integrity Failures~~](https://owasp.org/Top10/A08_2021-Software_and_Data_Integrity_Failures/)
-Unsafe Space does not seem to match the criteria of this vulnerability.
-
 ## 7. [A07:2021 – Identification and Authentication Failures](https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures/)
 ### Links
 - https://github.com/sofiak-hel/unsafe_space/blob/main/src/db/mod.rs#L117
@@ -124,6 +143,9 @@ Many issues in this vulnerability apply.
   forms with it.
 - Use a hashing function, such as Argon2, for passwords before saving them to the database.
 - Implement some kind of 2FA, such as [TOTP](https://en.wikipedia.org/wiki/Time-based_One-Time_Password)
+
+## 8. [~~A08:2021 – Software and Data Integrity Failures~~](https://owasp.org/Top10/A08_2021-Software_and_Data_Integrity_Failures/)
+Unsafe Space does not seem to match the criteria of this vulnerability.
 
 ## 9. [A09:2021 – Security Logging and Monitoring Failures](https://owasp.org/Top10/A09_2021-Security_Logging_and_Monitoring_Failures/)
 ### Links

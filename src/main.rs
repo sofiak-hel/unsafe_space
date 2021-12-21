@@ -50,7 +50,17 @@ fn initialize() -> Result<(Config, Database, MimeTypes)> {
     std::env::set_var("RUST_LOG", &config.log_level);
     env_logger::init();
 
-    let mimetypes = MimeTypes::from(&config.mimetypes_path)?;
+    let mimetypes = match MimeTypes::from_file(&config.mimetypes_path) {
+        Ok(m) => m,
+        Err(e) => {
+            log::error!("{}", e);
+            log::warn!(
+                "Failed to read mimetypes from {:?}, using default mimetypes",
+                &config.mimetypes_path
+            );
+            MimeTypes::default()
+        }
+    };
 
     let mut db = Database::new(config.clone());
     if config.force_recreate_db {

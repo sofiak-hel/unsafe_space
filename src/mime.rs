@@ -1,8 +1,8 @@
 use crate::Result;
 use std::collections::HashMap;
-use std::fs::File;
-use std::io::{BufRead, BufReader};
 use std::path::Path;
+
+static DEFAULT_MIMETYPES: &str = include_str!("mime.types");
 
 #[derive(Debug, Clone)]
 pub struct MimeTypes {
@@ -12,12 +12,17 @@ pub struct MimeTypes {
 }
 
 impl MimeTypes {
-    pub fn from<T: AsRef<Path>>(path: T) -> Result<MimeTypes> {
-        let mut lines = BufReader::new(File::open(path)?).lines();
+    pub fn from_file<T: AsRef<Path>>(path: T) -> Result<MimeTypes> {
+        MimeTypes::from_text(std::fs::read_to_string(path)?)
+    }
+
+    pub fn from_text<T: Into<String>>(text: T) -> Result<MimeTypes> {
+        let text = text.into();
+        let mut lines = text.lines();
         let mut mimetypes = HashMap::new();
         let mut extensions = HashMap::new();
 
-        while let Some(Ok(line)) = lines.next() {
+        while let Some(line) = lines.next() {
             let line = line.trim();
             if line.starts_with("#") {
                 continue;
@@ -45,5 +50,11 @@ impl MimeTypes {
 
     pub fn mimetype<T: Into<String>>(&self, extension: T) -> Option<&String> {
         self.mimetypes.get(&extension.into())
+    }
+}
+
+impl Default for MimeTypes {
+    fn default() -> MimeTypes {
+        MimeTypes::from_text(DEFAULT_MIMETYPES).unwrap()
     }
 }

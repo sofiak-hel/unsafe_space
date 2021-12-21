@@ -27,7 +27,7 @@ impl Config {
 impl Default for Config {
     fn default() -> Config {
         Config {
-            host: "0.0.0.0".to_owned(),
+            host: "127.0.0.1".to_owned(),
             port: 8080,
             force_recreate_db: false,
             session_exp: 60,

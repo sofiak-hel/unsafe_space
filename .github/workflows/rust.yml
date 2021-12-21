@@ -35,9 +35,8 @@ jobs:
       run: cargo build --verbose --release
     - name: Post-process
       run: |
-        strip target/release/unsafe_space
-        mv target/release/unsafe_space unsafe_space
-        zip unsafe_space.zip unsafe_space static config.toml
+        mv target/release/unsafe_space.exe unsafe_space.exe
+        7z a unsafe_space.zip unsafe_space.exe static config.toml
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v2
       with:

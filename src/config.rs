@@ -1,6 +1,10 @@
-use std::path::PathBuf;
+use std::{fs::File, io::Read, path::PathBuf};
 
-#[derive(Clone)]
+use serde::Deserialize;
+
+use crate::Result;
+
+#[derive(Clone, Deserialize)]
 pub struct Config {
     pub host: String,
     pub port: u16,
@@ -10,6 +14,14 @@ pub struct Config {
     pub log_level: String,
     pub logging_template: String,
     pub mimetypes_path: PathBuf,
+}
+
+impl Config {
+    pub fn from_file<T: Into<PathBuf>>(path: T) -> Result<Config> {
+        let mut text = String::new();
+        File::open(path.into())?.read_to_string(&mut text)?;
+        Ok(toml::from_str(&text)?)
+    }
 }
 
 impl Default for Config {

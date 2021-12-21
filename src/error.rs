@@ -24,6 +24,7 @@ pub enum Error {
     IOError(std::io::Error),
     SystemTimeError(std::time::SystemTimeError),
     USpaceError(USpaceError),
+    TOMLError(toml::de::Error),
 }
 
 impl std::fmt::Display for Error {
@@ -32,6 +33,7 @@ impl std::fmt::Display for Error {
             Error::RusqliteError(err) => format!("SQLite error: {}", err),
             Error::IOError(err) => format!("IO error: {}", err),
             Error::SystemTimeError(err) => format!("SystemTimeError: {}", err),
+            Error::TOMLError(err) => format!("TOML error: {}", err),
             Error::USpaceError(err) => format!("{}", err),
         };
         write!(f, "{}", text)
@@ -59,5 +61,11 @@ impl From<std::time::SystemTimeError> for Error {
 impl From<USpaceError> for Error {
     fn from(error: USpaceError) -> Error {
         Error::USpaceError(error)
+    }
+}
+
+impl From<toml::de::Error> for Error {
+    fn from(error: toml::de::Error) -> Error {
+        Error::TOMLError(error)
     }
 }

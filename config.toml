@@ -1,0 +1,8 @@
+host = "0.0.0.0"
+port = 8080
+force_recreate_db = false
+session_exp = 60
+static_path = "./static"
+log_level = "INFO"
+logging_template = "%r %s %a"
+mimetypes_path = "/etc/mime.types"

@@ -40,12 +40,17 @@ async fn main() -> std::io::Result<()> {
 }
 
 fn initialize() -> Result<(Config, Database, MimeTypes)> {
-    let config = Config::default();
-
-    let mimetypes = MimeTypes::from(&config.mimetypes_path)?;
+    let config = if let Ok(c) = Config::from_file("config.toml") {
+        c
+    } else {
+        println!("Failed to load config.toml. Defaulting to default config");
+        Config::default()
+    };
 
     std::env::set_var("RUST_LOG", &config.log_level);
     env_logger::init();
+
+    let mimetypes = MimeTypes::from(&config.mimetypes_path)?;
 
     let mut db = Database::new(config.clone());
     if config.force_recreate_db {

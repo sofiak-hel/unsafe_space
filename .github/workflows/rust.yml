@@ -10,11 +10,54 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
+  build-linux:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Build
-      run: cargo build --verbose
-    - name: Run tests
-      run: cargo test --verbose
+      run: cargo build --verbose --release
+    - name: Post-process
+      run: |
+        strip target/release/unsafe_space
+        mv target/release/unsafe_space unsafe_space
+        zip unsafe_space.zip unsafe_space static config.toml
+    - name: 'Upload Artifact'
+      uses: actions/upload-artifact@v2
+      with:
+        name: unsafe_space.linux.zip
+        path: unsafe_space.zip
+        retention-days: 5
+  build-windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build
+      run: cargo build --verbose --release
+    - name: Post-process
+      run: |
+        strip target/release/unsafe_space
+        mv target/release/unsafe_space unsafe_space
+        zip unsafe_space.zip unsafe_space static config.toml
+    - name: 'Upload Artifact'
+      uses: actions/upload-artifact@v2
+      with:
+        name: unsafe_space.windows.zip
+        path: unsafe_space.zip
+        retention-days: 5
+  build-macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build
+      run: cargo build --verbose --release
+    - name: Post-process
+      run: |
+        strip target/release/unsafe_space
+        mv target/release/unsafe_space unsafe_space
+        zip unsafe_space.zip unsafe_space static config.toml
+    - name: 'Upload Artifact'
+      uses: actions/upload-artifact@v2
+      with:
+        name: unsafe_space.macos.zip
+        path: unsafe_space.zip
+        retention-days: 5
